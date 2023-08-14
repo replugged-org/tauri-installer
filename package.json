@@ -1,0 +1,45 @@
+{
+  "name": "tauri-installer",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "typescript:check": "tsc --noEmit",
+    "cspell:check": "cspell lint ./src/**/*",
+    "prettier:check": "prettier ./src --check",
+    "eslint:check": "eslint ./src",
+    "prettier:fix": "prettier ./src --write",
+    "eslint:fix": "eslint ./src --fix",
+    "lint": "pnpm run prettier:check && pnpm run eslint:check && pnpm run cspell:check && pnpm run typescript:check",
+    "lint:fix": "pnpm run prettier:fix && pnpm run eslint:fix && pnpm run cspell:check && pnpm run typescript:check"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^1.4.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.15.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^1.4.0",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^5.51.0",
+    "@typescript-eslint/parser": "^5.51.0",
+    "@vitejs/plugin-react": "^4.0.3",
+    "cspell": "^7.0.0",
+    "eslint": "^8.33.0",
+    "eslint-config-dmitmel": "github:dmitmel/eslint-config-dmitmel",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-react": "^7.31.8",
+    "prettier": "^3.0.1",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.4"
+  }
+}

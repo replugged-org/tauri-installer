@@ -1,0 +1,63 @@
+.platform-page {
+  width: 75%;
+}
+
+.platform-page-header {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.choose-platform {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 10px 0px;
+}
+
+.platform-button {
+  width: 100%;
+  background-color: var(--background-secondary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.platform-button input[type="checkbox"] {
+  position: absolute;
+  left: 0;
+  margin: 0px;
+  margin-left: 10px;
+}
+
+.platform-button-active {
+  background-color: var(--blurple);
+}
+
+.platform-warning {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  margin-top: 10px;
+  border: 1px solid rgba(240, 178, 50, 1);
+  border-radius: 5px;
+  padding: 10px;
+  background-color: rgba(240, 178, 50, 0.1);
+}
+
+.platform-bottom {
+  width: 100%;
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.platform-bottom .button {
+  min-width: 100px;
+}
+
+.platform-troubleshooting {
+  margin: 25px 0px;
+}

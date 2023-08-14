@@ -1,0 +1,48 @@
+.action-page {
+  width: 75%;
+}
+
+.action-page-header {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.choose-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 10px 0px;
+}
+
+.action-button {
+  width: 100%;
+  background-color: var(--background-secondary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.action-button input[type="radio"] {
+  position: absolute;
+  left: 0;
+  margin: 0px;
+  margin-left: 10px;
+}
+
+.action-button-active {
+  background-color: var(--blurple);
+}
+
+.action-bottom {
+  width: 100%;
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.action-bottom .button {
+  min-width: 100px;
+}

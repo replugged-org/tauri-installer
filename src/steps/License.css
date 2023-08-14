@@ -1,0 +1,22 @@
+.license-page {
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+}
+
+.license {
+  background-color: var(--background-secondary);
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.license-bottom {
+  width: 100%;
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.license-bottom .button {
+  min-width: 100px;
+}

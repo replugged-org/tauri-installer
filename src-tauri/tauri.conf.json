@@ -1,0 +1,54 @@
+{
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "beforeBuildCommand": "pnpm build",
+    "devPath": "http://localhost:1420",
+    "distDir": "../dist",
+    "withGlobalTauri": false
+  },
+  "package": {
+    "productName": "tauri-installer",
+    "version": "0.0.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": false,
+      "shell": {
+        "execute": true,
+        "open": true
+      },
+      "fs": {
+        "all": true,
+        "scope": ["$CONFIG/replugged", "$CONFIG/replugged/*"]
+      },
+      "os": {
+        "all": true
+      },
+      "http": {
+        "request": true,
+        "scope": ["https://replugged.dev/api/v1/store/*"]
+      },
+      "path": {
+        "all": true
+      }
+    },
+    "bundle": {
+      "active": true,
+      "targets": "all",
+      "identifier": "dev.replugged.Installer",
+      "icon": ["../public/icon.icns", "../public/icon.png"]
+    },
+    "security": {
+      "csp": null
+    },
+    "windows": [
+      {
+        "fullscreen": false,
+        "resizable": true,
+        "title": "Replugged Installer",
+        "width": 800,
+        "height": 600
+      }
+    ]
+  }
+}

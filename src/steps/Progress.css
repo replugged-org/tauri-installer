@@ -1,0 +1,42 @@
+.progress-page {
+  width: 75%;
+}
+
+.progress-page-header {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.statuses {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 10px 0px;
+}
+
+.progress-button {
+  width: 100%;
+  background-color: var(--background-secondary);
+  pointer-events: none;
+}
+
+.progress-button-done {
+  background-color: var(--green);
+}
+
+.progress-button-error {
+  background-color: var(--red);
+}
+
+.progress-bottom {
+  width: 100%;
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.progress-bottom .button {
+  min-width: 100px;
+}
