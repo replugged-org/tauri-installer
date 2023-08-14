@@ -6,6 +6,7 @@
   "words": [
     "alertdialog",
     "APPDATA",
+    "appimage",
     "Arrayable",
     "asar",
     "autosize",
@@ -27,6 +28,7 @@
     "globstar",
     "groupstart",
     "HighlightJS",
+    "icns",
     "installdir",
     "Jsonifiable",
     "lezer",
@@ -35,6 +37,7 @@
     "logname",
     "Millis",
     "notrack",
+    "nsis",
     "outfile",
     "popout",
     "postpublish",
