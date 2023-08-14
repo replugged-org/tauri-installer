@@ -118,5 +118,10 @@ a:not(.button):hover {
 .button:not(.button-disabled):not(:disabled):hover {
   -webkit-filter: brightness(0.9);
   filter: brightness(0.9);
+}
+
+.button:hover,
+.button:focus,
+.button:active {
   color: var(--text-primary);
 }
