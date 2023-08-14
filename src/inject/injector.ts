@@ -2,8 +2,10 @@
 import { configDir, join, sep } from "@tauri-apps/api/path";
 import { ResponseType, fetch } from "@tauri-apps/api/http";
 import { createDir, exists, remove, removeDir, rename, write } from "../util";
-import { writeBinaryFile } from "@tauri-apps/api/fs";
+import { readTextFile, writeBinaryFile } from "@tauri-apps/api/fs";
+import { EventEmitter } from "@tauri-apps/api/shell";
 
+const MANIFEST_URL = "https://replugged.dev/api/v1/store/dev.replugged.Replugged";
 const DOWNLOAD_URL = "https://replugged.dev/api/v1/store/dev.replugged.Replugged.asar?type=install";
 
 const moveToOrig = async (appDir: string): Promise<void> => {
@@ -24,19 +26,70 @@ const moveToOrig = async (appDir: string): Promise<void> => {
 
 const getConfigDir = async (): Promise<string> => await join(await configDir(), "replugged");
 
-export const download = async (): Promise<void> => {
-  const entryPoint = await join(await getConfigDir(), "replugged.asar");
+type Stages = "stage" | "done" | "error";
+export type DownloadEmitter = EventEmitter<Stages> & {
+  stage?: {
+    type: Stages;
+    text?: string;
+  };
+};
 
-  const res = await fetch<ArrayBuffer>(DOWNLOAD_URL, {
-    method: "GET",
-    responseType: ResponseType.Binary,
+export const download = (): DownloadEmitter => {
+  const emitter: DownloadEmitter = new EventEmitter<Stages>();
+
+  const updateStage = (type: Stages, text?: string): void => {
+    emitter.stage = {
+      type,
+      text,
+    };
+    emitter.emit(type, text);
+  };
+
+  (async () => {
+    const configDir = await getConfigDir();
+    const manifestPath = await join(configDir, "replugged.json");
+    const asarPath = await join(configDir, "replugged.asar");
+    let currentVersion: string | undefined;
+    if (await exists(manifestPath)) {
+      const manifest = JSON.parse(await readTextFile(manifestPath));
+      currentVersion = manifest.version;
+      console.log(`Current version is ${currentVersion}`);
+    } else {
+      console.log("Not already downloaded");
+    }
+
+    updateStage("stage", "Checking for updates...");
+    const manifest = await fetch<{ version: string }>(MANIFEST_URL, {
+      method: "GET",
+      responseType: ResponseType.JSON,
+    });
+    const isLatest = currentVersion === manifest.data.version;
+    if (isLatest) {
+      console.log("Downloaded asar is already up to date");
+      updateStage("done");
+      return;
+    }
+    console.log("Downloading new version");
+    updateStage("stage", `Downloading Replugged (v${manifest.data.version})...`);
+    const res = await fetch<ArrayBuffer>(DOWNLOAD_URL, {
+      method: "GET",
+      responseType: ResponseType.Binary,
+    });
+    if (!res?.ok) throw new Error("Failed to download Replugged");
+
+    updateStage("stage", "Saving to disk");
+    const configDirExists = await exists(await getConfigDir());
+    if (!configDirExists) await getConfigDir();
+    console.log(`WRITE ${asarPath}`);
+    await writeBinaryFile(asarPath, res.data);
+    console.log(`WRITE ${manifestPath}`);
+    await write(manifestPath, JSON.stringify(manifest.data));
+    updateStage("done");
+  })().catch((err) => {
+    updateStage("error", err);
   });
-  if (!res?.ok) throw new Error("Failed to download Replugged");
 
-  const configDirExists = await exists(await getConfigDir());
-  if (!configDirExists) await getConfigDir();
-  console.log(`WRITE ${entryPoint}`);
-  await writeBinaryFile(entryPoint, res.data);
+  return emitter;
 };
 
 export const inject = async (appDir: string): Promise<void> => {

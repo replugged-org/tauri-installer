@@ -1,34 +1,64 @@
 import { useEffect, useState } from "react";
 import "./Download.css";
 import "../App.css";
-import { useNavigate } from "react-router-dom";
-import { download } from "../inject/injector";
+import { Link, useNavigate } from "react-router-dom";
+import { DownloadEmitter } from "../inject/injector";
 
-export function Download({ onDownload }: { onDownload: () => void }): React.ReactElement {
+export function Download({
+  onDownload,
+  downloadEmitter,
+}: {
+  onDownload: () => void;
+  downloadEmitter: DownloadEmitter | null;
+}): React.ReactElement {
   const navigate = useNavigate();
 
-  const [step, setStep] = useState<"downloading" | "done" | "error">("downloading");
+  console.log("downloadEmitter", downloadEmitter);
+  console.log("stage", downloadEmitter?.stage);
+  const [stage, setStage] = useState(downloadEmitter?.stage?.text);
+  const [isError, setIsError] = useState(false);
+
+  const onStage = (text: string): void => {
+    setStage(text);
+    setIsError(false);
+  };
+
+  const onDone = (): void => {
+    onDownload();
+    setStage("Done!");
+    setIsError(false);
+    navigate("/action");
+  };
+
+  const onError = (): void => {
+    setStage("Error!");
+    setIsError(true);
+  };
 
   useEffect(() => {
-    download()
-      .then(() => {
-        onDownload();
-        setStep("done");
-        navigate("/action");
-      })
-      .catch((err) => {
-        console.error("Error downloading", err);
-        setStep("error");
-      });
-  }, []);
+    if (!downloadEmitter) return;
+
+    downloadEmitter.on("stage", onStage);
+    downloadEmitter.on("done", onDone);
+    downloadEmitter.on("error", onError);
+
+    return () => {
+      downloadEmitter.off("stage", onStage);
+      downloadEmitter.off("done", onDone);
+      downloadEmitter.off("error", onError);
+    };
+  }, [downloadEmitter]);
 
   return (
     <div className="page download-page">
-      <div className="download-step">
-        {step === "downloading" && `Downloading...`}
-        {step === "done" && "Done!"}
-        {step === "error" && "Error!"}
-      </div>
+      <div className="download-step">{stage || "Please Wait..."}</div>
+      {isError ? (
+        <div className="platform-bottom">
+          <Link to="/" className="button button">
+            Start Over
+          </Link>
+        </div>
+      ) : null}
     </div>
   );
 }

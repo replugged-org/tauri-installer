@@ -5,6 +5,7 @@ import logo from "/logo.png";
 import { useEffect, useState } from "react";
 import { DiscordPlatform, PlatformData } from "./types";
 import { listInstallations, plug, unplug } from "./inject/index.ts";
+import { DownloadEmitter, download } from "./inject/injector.ts";
 
 function Header(): React.ReactElement {
   return (
@@ -30,6 +31,7 @@ function Main(): React.ReactElement {
   const [platformData, setPlatformData] = useState<Record<DiscordPlatform, PlatformData> | null>(
     null,
   );
+  const [downloadEmitter, setDownloadEmitter] = useState<DownloadEmitter | null>(null);
   const [done, setDone] = useState<DiscordPlatform[]>([]);
   const [error, setError] = useState<DiscordPlatform[]>([]);
 
@@ -38,6 +40,8 @@ function Main(): React.ReactElement {
       setAction("plug");
       setPlatforms([]);
       setPlatformData(null);
+      setDone([]);
+      setError([]);
 
       if (!agreedToLicense) {
         navigate("/");
@@ -74,6 +78,11 @@ function Main(): React.ReactElement {
     });
   };
 
+  const downloadReplugged = (): void => {
+    const emitter = download();
+    setDownloadEmitter(emitter);
+  };
+
   useEffect(() => {
     void init(true);
   }, []);
@@ -81,8 +90,23 @@ function Main(): React.ReactElement {
   return (
     <div className="wrapper">
       <Routes>
-        <Route path="/" element={<License onAgree={() => setAgreedToLicense(true)} />} />
-        <Route path="/download" element={<Download onDownload={() => setDownloaded(true)} />} />
+        <Route
+          path="/"
+          element={
+            <License
+              onAgree={() => {
+                setAgreedToLicense(true);
+                downloadReplugged();
+              }}
+            />
+          }
+        />
+        <Route
+          path="/download"
+          element={
+            <Download onDownload={() => setDownloaded(true)} downloadEmitter={downloadEmitter} />
+          }
+        />
         <Route path="/action" element={<ChooseAction action={action} setAction={setAction} />} />
         <Route
           path="/platform"
