@@ -7,7 +7,7 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "replugged-installer",
+    "productName": "Replugged Installer",
     "version": "0.0.0"
   },
   "tauri": {
@@ -29,6 +29,12 @@
         "scope": ["https://replugged.dev/api/v1/store/*"]
       },
       "path": {
+        "all": true
+      },
+      "process": {
+        "exit": true
+      },
+      "dialog": {
         "all": true
       }
     },

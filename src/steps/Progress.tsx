@@ -3,6 +3,7 @@ import { PLATFORM_LABELS } from "../util";
 import "./Progress.css";
 import "../App.css";
 import { useNavigate } from "react-router-dom";
+import { exit } from "@tauri-apps/api/process";
 
 export function Progress({
   platforms,
@@ -68,7 +69,7 @@ export function Progress({
           <button
             className="button"
             onClick={() => {
-              window.close();
+              void exit(0);
             }}>
             Close
           </button>

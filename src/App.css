@@ -125,3 +125,11 @@ a:not(.button):hover {
 .button:active {
   color: var(--text-primary);
 }
+
+.button:active {
+  background-color: var(--blurple);
+}
+
+.button-secondary:active {
+  background-color: var(--background-secondary);
+}
