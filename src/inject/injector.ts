@@ -22,6 +22,20 @@ const moveToOrig = async (appDir: string): Promise<void> => {
     console.log(`RM ${appDir}`);
     await remove(appDir);
   }
+
+  // For discord_arch_electron
+  const unpackedPath = await join(appDir, "..", "app.asar.unpacked");
+  const unpackedOrigPath = await join(appDir, "..", "app.orig.asar.unpacked");
+  const unpackedExists = await exists(unpackedPath);
+  const unpackedOrigExists = await exists(unpackedOrigPath);
+  if (unpackedExists && !unpackedOrigExists) {
+    console.log(`MV ${unpackedPath} ${unpackedOrigPath}`);
+    await rename(unpackedPath, unpackedOrigPath);
+  }
+  if (unpackedExists) {
+    console.log(`RM ${unpackedPath}`);
+    await removeDir(unpackedPath);
+  }
 };
 
 const getConfigDir = async (): Promise<string> => await join(await configDir(), "replugged");
@@ -127,5 +141,20 @@ export const uninject = async (appDir: string): Promise<void> => {
   const origPath = await join(appDir, "..", "app.orig.asar");
   console.log(`MV ${origPath} ${appDir}`);
   await rename(origPath, appDir);
+
+  // For discord_arch_electron
+  const unpackedPath = await join(appDir, "..", "app.asar.unpacked");
+  const unpackedOrigPath = await join(appDir, "..", "app.orig.asar.unpacked");
+  const unpackedExists = await exists(unpackedPath);
+  const unpackedOrigExists = await exists(unpackedOrigPath);
+  if (unpackedOrigExists && !unpackedExists) {
+    console.log(`MV ${unpackedOrigPath} ${unpackedPath}`);
+    await rename(unpackedOrigPath, unpackedPath);
+  }
+  if (unpackedOrigExists) {
+    console.log(`RM ${unpackedOrigPath}`);
+    await removeDir(unpackedOrigPath);
+  }
+
   console.log("DONE UNINJECTING!");
 };

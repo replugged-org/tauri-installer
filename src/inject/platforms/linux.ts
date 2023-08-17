@@ -1,5 +1,5 @@
 import { DiscordPlatform } from "../../types";
-import { homeDir, join } from "@tauri-apps/api/path";
+import { basename, homeDir, join } from "@tauri-apps/api/path";
 import { Command } from "@tauri-apps/api/shell";
 import { exists, promiseFind } from "../../util";
 
@@ -8,6 +8,27 @@ const ProcessRegex: Record<DiscordPlatform, RegExp> = {
   ptb: /discord-?ptb$/i,
   canary: /discord-?canary$/i,
   development: /discord-?development$/i,
+};
+
+const findAppAsarInDir = async (dir: string): Promise<string | null> => {
+  const name = await basename(dir);
+  if (name === "app.asar") return dir;
+  const topLevelAsar = await join(dir, "app.asar");
+  if (await exists(topLevelAsar)) return topLevelAsar;
+  const resourcesAsar = await join(dir, "resources", "app.asar");
+  if (await exists(resourcesAsar)) return resourcesAsar;
+
+  return null;
+};
+
+const findPathFromPaths = async (paths: string[]): Promise<string | null> => {
+  const discordPath = await promiseFind(paths, async (path) => await exists(path));
+
+  // TODO: Ask user for path
+  if (!discordPath) return null;
+
+  const path = await findAppAsarInDir(discordPath);
+  return path;
 };
 
 export const getAppDir = async (platform: DiscordPlatform): Promise<string | null> => {
@@ -57,18 +78,17 @@ export const getAppDir = async (platform: DiscordPlatform): Promise<string | nul
     .find((p) => p[4] && ProcessRegex[platform].test(p[4]) && p.includes("--type=renderer"));
 
   if (!discordProcess) {
-    const discordPath = await promiseFind(
-      KnownLinuxPaths[platform],
-      async (path) => await exists(path),
-    );
-
-    // TODO: Ask user for path
-    if (!discordPath) return null;
-
-    return await join(discordPath, "resources", "app.asar");
+    const paths = KnownLinuxPaths[platform];
+    return await findPathFromPaths(paths);
   }
 
   const discordPath = discordProcess[4].split("/");
   discordPath.splice(discordPath.length - 1, 1);
-  return await join("/", ...discordPath, "resources", "app.asar");
+  const path = await findAppAsarInDir(await join(...discordPath));
+  if (!path) {
+    const paths = KnownLinuxPaths[platform];
+    return await findPathFromPaths(paths);
+  }
+
+  return path;
 };
