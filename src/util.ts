@@ -1,3 +1,4 @@
+import { basename } from "@tauri-apps/api/path";
 import { DiscordPlatform } from "./types";
 import { invoke } from "@tauri-apps/api/tauri";
 
@@ -27,9 +28,11 @@ export const exists = async (path: string): Promise<boolean> => {
 };
 
 export const listDir = async (path: string): Promise<string[]> => {
-  return await invoke("list_dir", {
-    path,
-  });
+  return await Promise.all(
+    await invoke("list_dir", {
+      path,
+    }).then((path) => (path as string[]).map((path) => basename(path))),
+  );
 };
 
 export const rename = async (from: string, to: string): Promise<void> => {

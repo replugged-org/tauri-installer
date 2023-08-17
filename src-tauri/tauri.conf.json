@@ -15,7 +15,14 @@
       "all": false,
       "shell": {
         "execute": true,
-        "open": true
+        "open": true,
+        "scope": [
+          {
+            "name": "ps",
+            "cmd": "ps",
+            "args": true
+          }
+        ]
       },
       "fs": {
         "all": true,
