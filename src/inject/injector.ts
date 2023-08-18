@@ -61,6 +61,7 @@ export const download = (): DownloadEmitter => {
 
   (async () => {
     const configDir = await getConfigDir();
+    if (!(await exists(configDir))) await createDir(configDir);
     const manifestPath = await join(configDir, "replugged.json");
     const asarPath = await join(configDir, "replugged.asar");
     let currentVersion: string | undefined;
